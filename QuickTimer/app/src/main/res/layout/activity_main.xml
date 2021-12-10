@@ -7,21 +7,33 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:layout_width="wrap_content" 
+        android:id="@+id/timer_textView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:text="00:10"
         android:textColor="#000000"
-        android:textSize="50sp"/>
-        <!-- Layout Width: Wrap around the width of the timer
-             Layout Height: Wrap around the height of the timer
-             Layout Constraints: Constrain all sides to the parent (screen itself)
-             Text: For now just make it ten seconds 00:10
-             TextColor: Black!
-             TextSize: 50sp (Scaleable Pixels) This adjusts for both the screen density and the user's font preferences -->
+        android:textSize="50sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="START"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.499"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timer_textView"
+        app:layout_constraintVertical_bias="0.061" />
+    <!-- Layout Width: Wrap around the width of the timer
+         Layout Height: Wrap around the height of the timer
+         Layout Constraints: Constrain all sides to the parent (screen itself)
+         Text: For now just make it ten seconds 00:10
+         TextColor: Black!
+         TextSize: 50sp (Scalable Pixels) This adjusts for both the screen density and the user's font preferences -->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
