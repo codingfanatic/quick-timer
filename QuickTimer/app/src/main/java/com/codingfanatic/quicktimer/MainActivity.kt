@@ -1,6 +1,9 @@
 package com.codingfanatic.quicktimer
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -8,6 +11,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import com.codingfanatic.quicktimer.databinding.ActivityMainBinding
+import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,23 +37,8 @@ class MainActivity : AppCompatActivity() {
         binding.startStopButton.setOnClickListener{ resetTimer() }
 
 
-//        serviceIntent = Intent()  ----------------- Will pick up from here next time 5m30s
-//        registerReceiver()
-
-        initViews()
-
-//        object : CountDownTimer(30000, 1000) {
-//
-//            override fun onTick(millisUntilFinished: Long) {
-//                //mTextField.setText("seconds remaining: " + millisUntilFinished / 1000)
-//            }
-//
-//            override fun onFinish() {
-//                //mTextField.setText("done!")
-//            }
-//        }.start()
-
-
+        serviceIntent = Intent()
+        registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
     }
 
     private fun resetTimer() {
@@ -59,6 +48,24 @@ class MainActivity : AppCompatActivity() {
     private fun startStopTimer() {
         TODO("Not yet implemented")
     }
+
+    private val updateTime: BroadcastReceiver = object: BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            time = intent.getDoubleExtra(TimerService.TIME_EXTRA, 0.0)
+            binding.timerTextView.text = getTimeStringFromDouble(time)
+        }
+    }
+
+    private fun getTimeStringFromDouble(time: Double): String {
+        val resultInt = time.roundToInt()
+        val hours = resultInt % 86400 / 3600
+        val minutes = resultInt % 86400 % 3600 / 60
+        val seconds = resultInt % 86400 % 3600 % 60
+
+        return makeTimeString(hours, minutes, seconds)
+    }
+
+    private fun makeTimeString(hour: Int, min: Int, sec: Int): String = String.format("%02d:%02d:%02d", hour, min, sec)
 
     private fun initViews() {
         timeDisplayed = findViewById(R.id.timer_textView)
