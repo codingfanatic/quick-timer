@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     private var timerButton: Button? = null
     private var someTimer: CountDownTimer? = null
 
-    private var started = false
+    private var timerStarted = false
 
     private lateinit var serviceIntent: Intent
     private lateinit var binding: ActivityMainBinding
@@ -42,11 +42,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun resetTimer() {
-        TODO("Not yet implemented")
+        stopTimer()
+        time = 0.0
+        binding.timerTextView.text = getTimeStringFromDouble(time)
     }
 
     private fun startStopTimer() {
-        TODO("Not yet implemented")
+        if(timerStarted){
+            stopTimer()
+        }
+        else{
+            startTimer()
+        }
+    }
+
+    private fun startTimer() {
+        serviceIntent.putExtra(TimerService.TIME_EXTRA, time)
+        startService(serviceIntent)
+        binding.startStopButton.text = "Stop"
+        binding.startStopButton.icon = getDrawable(R.drawable.ic_baseline_pause_24)
+        timerStarted = true
+    }
+
+    private fun stopTimer() {
+        stopService(serviceIntent)
+        binding.startStopButton.text = "Start"
+        binding.startStopButton.icon = getDrawable(R.drawable.ic_baseline_play_arrow_24)
+        timerStarted = false
     }
 
     private val updateTime: BroadcastReceiver = object: BroadcastReceiver() {
