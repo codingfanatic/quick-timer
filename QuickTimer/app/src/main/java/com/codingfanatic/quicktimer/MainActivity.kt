@@ -34,10 +34,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.startStopButton.setOnClickListener{ startStopTimer() }
-        binding.startStopButton.setOnClickListener{ resetTimer() }
+        binding.resetButton.setOnClickListener{ resetTimer() }
 
 
-        serviceIntent = Intent()
+        serviceIntent = Intent(applicationContext, TimerService::class.java)
         registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
     }
 
@@ -61,6 +61,9 @@ class MainActivity : AppCompatActivity() {
         startService(serviceIntent)
         binding.startStopButton.text = "Stop"
         binding.startStopButton.icon = getDrawable(R.drawable.ic_baseline_pause_24)
+        //Try setting the text view each time we start the timer
+        binding.timerTextView.text = getTimeStringFromDouble(time)
+        Log.v(TAG, "Time equals: ${time}")
         timerStarted = true
     }
 
@@ -88,17 +91,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun makeTimeString(hour: Int, min: Int, sec: Int): String = String.format("%02d:%02d:%02d", hour, min, sec)
-
-    private fun initViews() {
-        timeDisplayed = findViewById(R.id.timer_textView)
-        //timerButton = findViewById(R.id.timer_button)
-    }
-//
-//    private var countDownTimer = object: CountDownTimer(1000 * 30, 1000) {
-//        override fun onTick(millisUntilFinished: Long) {
-//            Log.d(TAG, "onTick: $(millisUntilFinished/1000f")
-//        }
-//    }
 }
 
 
