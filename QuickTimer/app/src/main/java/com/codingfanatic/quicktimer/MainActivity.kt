@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.TextView
 import com.codingfanatic.quicktimer.databinding.ActivityMainBinding
 import kotlin.math.roundToInt
+import kotlin.math.truncate
 
 class MainActivity : AppCompatActivity() {
 
@@ -61,9 +62,7 @@ class MainActivity : AppCompatActivity() {
         startService(serviceIntent)
         binding.startStopButton.text = "Stop"
         binding.startStopButton.icon = getDrawable(R.drawable.ic_baseline_pause_24)
-        //Try setting the text view each time we start the timer
         binding.timerTextView.text = getTimeStringFromDouble(time)
-        Log.v(TAG, "Time equals: ${time}")
         timerStarted = true
     }
 
@@ -82,7 +81,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getTimeStringFromDouble(time: Double): String {
-        val resultInt = time.roundToInt()
+        val resultInt = truncate(time).toInt()
         val hours = resultInt % 86400 / 3600
         val minutes = resultInt % 86400 % 3600 / 60
         val seconds = resultInt % 86400 % 3600 % 60

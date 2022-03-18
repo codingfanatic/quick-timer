@@ -3,6 +3,7 @@ package com.codingfanatic.quicktimer
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import android.util.Log
 import java.util.*
 
 class TimerService: Service() {
@@ -14,7 +15,7 @@ class TimerService: Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val time = intent.getDoubleExtra(TIME_EXTRA, 0.0)
-        timer.scheduleAtFixedRate(TimeTask(time), 0, 1000)
+        timer.scheduleAtFixedRate(TimeTask(time), 0, 1)
         return START_NOT_STICKY
     }
 
@@ -26,9 +27,10 @@ class TimerService: Service() {
     private inner class TimeTask(private var time: Double) : TimerTask() {
         override fun run() {
             val intent = Intent(TIMER_UPDATED)
-            time++
             intent.putExtra(TIME_EXTRA, time)
+            time += .001
             sendBroadcast(intent)
+            Log.v("Look at the time", "${time}")
         }
     }
 
