@@ -18,7 +18,7 @@ import com.codingfanatic.quicktimer.databinding.SecondMainBinding
 import kotlin.math.roundToInt
 import kotlin.math.truncate
 
-class MainActivity: AppCompatActivity() {
+class MainActivity(millisInFuture: Long, countDownInterval: Long) : AppCompatActivity() {
     var timer_seekBar: SeekBar? = null
     var timer_textView_two: TextView? =null
     var timer_button_two: Button? =null
@@ -71,15 +71,50 @@ class MainActivity: AppCompatActivity() {
         timer_textView_two?.setText("$minutes:$secondsFinal")
     }
 
-
-
-
-
-    private fun start_timer(view: View) {
+    private fun start_timer() {
         if(!counterIsActive){
+            val seekBarProgressInt = timer_seekBar?.getProgress()
             counterIsActive = true;
             timer_seekBar?.setEnabled(false)
-            //Also set start button text to stop...once we figure out where it is?
+            timer_button_two?.setText("STOP")
+            countDownTimer = object:CountDownTimer((seekBarProgressInt!! * 1000).toLong(), 1000){
+                override fun onTick(millisUntilFinished: Long) {
+                    update((millisUntilFinished / 1000).toInt())
+                }
+
+                override fun onFinish() {
+                    reset()
+                    if(mediaPlayer != null){
+                        mediaPlayer?.start()
+                    }
+                }
+            }.start()
+        }
+        else{
+            reset()
+        }
+    }
+
+    private fun reset() {
+        timer_textView_two?.setText("0:30")
+        timer_seekBar?.setProgress(30)
+        countDownTimer?.cancel()
+        timer_button_two?.setText("START")
+        timer_seekBar?.setEnabled(true)
+        counterIsActive = false
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if(counterIsActive){
+            countDownTimer?.cancel()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if(counterIsActive){
+            countDownTimer?.cancel()
         }
     }
 }
