@@ -18,13 +18,11 @@ import com.codingfanatic.quicktimer.databinding.SecondMainBinding
 import kotlin.math.roundToInt
 import kotlin.math.truncate
 
-class MainActivity(millisInFuture: Long, countDownInterval: Long) : AppCompatActivity() {
-    var timer_seekBar: SeekBar? = null
-    var timer_textView_two: TextView? =null
-    var timer_button_two: Button? =null
+class MainActivity() : AppCompatActivity() {
     var countDownTimer: CountDownTimer? =null
     var counterIsActive = false
     var mediaPlayer: MediaPlayer? =null
+    val seekBarStartingProgress = 10
 
     private lateinit var binding: SecondMainBinding
 
@@ -34,50 +32,47 @@ class MainActivity(millisInFuture: Long, countDownInterval: Long) : AppCompatAct
         setContentView(binding.root)
 
         binding.startStopButtonTwo.setOnClickListener{ start_timer() }
+        binding.timerTexViewTwo.setText("0:$seekBarStartingProgress")
         mediaPlayer = MediaPlayer.create(applicationContext, R.raw.alarm)
-
         binding.volumeSeekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 update(progress)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                TODO("Not yet implemented")
+
             }
 
         })
-        /*
-            serviceIntent = Intent(applicationContext, TimerService::class.java)
-            registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
-        */
     }
 
     private fun update(progress: Int){
         val minutes = progress / 60
         val seconds = progress % 60
-        val secondsFinal = ""
+        var secondsFinal = ""
 
         if(seconds <= 9){
-            secondsFinal.plus("0$seconds")
+            secondsFinal = secondsFinal.plus("0$seconds")
         }
         else{
-            secondsFinal.plus(seconds)
+            secondsFinal = secondsFinal.plus(seconds)
         }
-        timer_seekBar?.setProgress(progress)
-        timer_textView_two?.setText("$minutes:$secondsFinal")
+        binding.volumeSeekBar.setProgress(progress)
+        binding.timerTexViewTwo.setText("$minutes:$secondsFinal")
     }
 
     private fun start_timer() {
         if(!counterIsActive){
-            val seekBarProgressInt = timer_seekBar?.getProgress()
+            val seekBarProgressInt = binding.volumeSeekBar.getProgress()
             counterIsActive = true;
-            timer_seekBar?.setEnabled(false)
-            timer_button_two?.setText("STOP")
-            countDownTimer = object:CountDownTimer((seekBarProgressInt!! * 1000).toLong(), 1000){
+
+            binding.volumeSeekBar.setEnabled(false)
+            binding.startStopButtonTwo.setText("STOP")
+            countDownTimer = object:CountDownTimer((seekBarProgressInt * 1000).toLong(), 1000){
                 override fun onTick(millisUntilFinished: Long) {
                     update((millisUntilFinished / 1000).toInt())
                 }
@@ -96,11 +91,11 @@ class MainActivity(millisInFuture: Long, countDownInterval: Long) : AppCompatAct
     }
 
     private fun reset() {
-        timer_textView_two?.setText("0:30")
-        timer_seekBar?.setProgress(30)
+        binding.timerTexViewTwo.setText("Press START!")
+        binding.startStopButtonTwo.setText("START")
+        binding.volumeSeekBar.setProgress(seekBarStartingProgress)
+        binding.volumeSeekBar.setEnabled(true)
         countDownTimer?.cancel()
-        timer_button_two?.setText("START")
-        timer_seekBar?.setEnabled(true)
         counterIsActive = false
     }
 
@@ -108,6 +103,8 @@ class MainActivity(millisInFuture: Long, countDownInterval: Long) : AppCompatAct
         super.onPause()
         if(counterIsActive){
             countDownTimer?.cancel()
+            mediaPlayer?.release()
+
         }
     }
 
@@ -115,6 +112,8 @@ class MainActivity(millisInFuture: Long, countDownInterval: Long) : AppCompatAct
         super.onDestroy()
         if(counterIsActive){
             countDownTimer?.cancel()
+            mediaPlayer?.release()
+
         }
     }
 }
